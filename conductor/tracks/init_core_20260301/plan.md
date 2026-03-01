@@ -18,9 +18,9 @@ This plan covers the initial scaffolding and core type implementation for `ebite
 
 ## Phase 3: Action Query API
 - [x] Task: Implement `Input.Update()` method skeleton in `input/input.go` f6e9f93
-- [ ] Task: Implement query methods in `input/input.go`:
-    - [ ] `Pressed(Action) bool`
-    - [ ] `JustPressed(Action) bool`
-    - [ ] `JustReleased(Action) bool`
+- [x] Task: Implement query methods in `input/input.go`: 800ff4f
+    - [x] `Pressed(Action) bool`
+    - [x] `JustPressed(Action) bool`
+    - [x] `JustReleased(Action) bool`
 - [ ] Task: Write unit tests for `Input` query methods in `input/input_test.go`
 - [ ] Task: Conductor - User Manual Verification 'Action Query API' (Protocol in workflow.md)
