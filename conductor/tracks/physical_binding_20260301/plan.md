@@ -2,13 +2,13 @@
 
 このプランは、物理入力デバイスを論理アクションに紐付ける機能をカバーします。
 
-## フェーズ 1: キーボードバインドの実装
+## フェーズ 1: キーボードバインドの実装 [checkpoint: 0a2f82f]
 - [x] タスク: `input/keyboard.go` を作成し、キーボード入力のバインド構造を定義 89c6239
 - [x] タスク: `BindKey(action, key)` の実装 fc98917
 - [x] タスク: `BindKeyAxis(action, left, right, up, down)` の実装 9e51889
 - [x] タスク: `Input.Update()` におけるキーボード入力のポーリング処理の実装 c5444c9
 - [x] タスク: キーボードバインドのユニットテスト作成 (`input/keyboard_test.go`) 9ec525e
-- [ ] タスク: Conductor - ユーザー手動検証 'キーボードバインド' (workflow.md 準拠)
+- [x] タスク: Conductor - ユーザー手動検証 'キーボードバインド' (workflow.md 準拠) 0a2f82f
 
 ## フェーズ 2: ゲームパッドバインドの実装
 - [ ] タスク: `input/gamepad.go` を作成し、ゲームパッド入力のバインド構造を定義
