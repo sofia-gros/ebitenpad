@@ -3,7 +3,7 @@
 This plan covers the initial scaffolding and core type implementation for `ebitenpad`.
 
 ## Phase 1: Project Scaffolding
-- [ ] Task: Create directory structure (`input`, `virtual`, `examples`)
+- [x] Task: Create directory structure (`input`, `virtual`, `examples`) bd338cf
 - [ ] Task: Initialize `input/input.go` with package declaration and basic imports
 - [ ] Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md)
 
