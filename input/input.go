@@ -21,13 +21,15 @@ type ActionState struct {
 
 // Input はアクションベースの入力を管理するメインマネージャーです。
 type Input struct {
-	actions map[Action]*ActionState
+	actions  map[Action]*ActionState
+	keyboard *keyboardManager
 }
 
 // NewInput は新しい Input インスタンスを作成し、初期化します。
 func NewInput() *Input {
 	return &Input{
-		actions: make(map[Action]*ActionState),
+		actions:  make(map[Action]*ActionState),
+		keyboard: newKeyboardManager(),
 	}
 }
 
