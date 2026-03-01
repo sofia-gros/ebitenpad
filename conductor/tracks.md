@@ -6,3 +6,5 @@ This file tracks all major tracks for the project. Each track has its own detail
 
 - [x] **Track: Initialize project structure and core Action system following README design**
   *Link: [./tracks/init_core_20260301/](./tracks/init_core_20260301/)*
+- [ ] **Track: キーボードとゲームパッドの入力バインド機能の実装**
+  *Link: [./tracks/physical_binding_20260301/](./tracks/physical_binding_20260301/)*
