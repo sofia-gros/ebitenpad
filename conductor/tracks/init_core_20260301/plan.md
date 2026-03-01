@@ -22,5 +22,5 @@ This plan covers the initial scaffolding and core type implementation for `ebite
     - [x] `Pressed(Action) bool`
     - [x] `JustPressed(Action) bool`
     - [x] `JustReleased(Action) bool`
-- [ ] Task: Write unit tests for `Input` query methods in `input/input_test.go`
+- [x] Task: Write unit tests for `Input` query methods in `input/input_test.go` c6b9e6d
 - [ ] Task: Conductor - User Manual Verification 'Action Query API' (Protocol in workflow.md)
