@@ -51,3 +51,47 @@ func (i *Input) BindKeyAxis(action Action, left, right, up, down ebiten.Key) {
 		down:   down,
 	})
 }
+
+// update はキーボード入力をポーリングし、各アクションの状態を更新します。
+func (m *keyboardManager) update(actions map[Action]*ActionState) {
+	for _, b := range m.keys {
+		state := getOrInitState(actions, b.action)
+		if ebiten.IsKeyPressed(b.key) {
+			state.pressed = true
+			state.strength = 1.0
+		}
+	}
+
+	for _, b := range m.axes {
+		state := getOrInitState(actions, b.action)
+		var dx, dy float64
+		if ebiten.IsKeyPressed(b.left) {
+			dx -= 1.0
+		}
+		if ebiten.IsKeyPressed(b.right) {
+			dx += 1.0
+		}
+		if ebiten.IsKeyPressed(b.up) {
+			dy -= 1.0
+		}
+		if ebiten.IsKeyPressed(b.down) {
+			dy += 1.0
+		}
+
+		if dx != 0 || dy != 0 {
+			state.pressed = true
+			state.x = dx
+			state.y = dy
+			state.strength = 1.0 // 簡易実装。
+		}
+	}
+}
+
+func getOrInitState(actions map[Action]*ActionState, action Action) *ActionState {
+	state, ok := actions[action]
+	if !ok {
+		state = &ActionState{}
+		actions[action] = state
+	}
+	return state
+}

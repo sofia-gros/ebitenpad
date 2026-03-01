@@ -17,6 +17,8 @@ type ActionState struct {
 	y float64
 
 	strength float64
+
+	lastPressed bool
 }
 
 // Input はアクションベースの入力を管理するメインマネージャーです。
@@ -35,7 +37,31 @@ func NewInput() *Input {
 
 // Update はすべてのアクションの状態を更新します。
 func (i *Input) Update() {
-	// TODO: バインドされたデバイスを反復処理し、アクションの状態を更新します。
+	// 状態のリセット
+	for _, state := range i.actions {
+		lastPressed := state.pressed
+		state.pressed = false
+		state.justPressed = false
+		state.justReleased = false
+		state.x = 0
+		state.y = 0
+		state.strength = 0
+
+		state.lastPressed = lastPressed
+	}
+
+	// 各デバイスのポーリング
+	i.keyboard.update(i.actions)
+
+	// JustPressed / JustReleased の確定
+	for _, state := range i.actions {
+		if state.pressed && !state.lastPressed {
+			state.justPressed = true
+		}
+		if !state.pressed && state.lastPressed {
+			state.justReleased = true
+		}
+	}
 }
 
 // Pressed はアクションが現在押されている場合に true を返します。
