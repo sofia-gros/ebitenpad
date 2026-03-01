@@ -17,7 +17,7 @@ This plan covers the initial scaffolding and core type implementation for `ebite
 - [x] Task: Conductor - User Manual Verification 'Core Types Implementation' (Protocol in workflow.md) f6afbac
 
 ## Phase 3: Action Query API
-- [ ] Task: Implement `Input.Update()` method skeleton in `input/input.go`
+- [x] Task: Implement `Input.Update()` method skeleton in `input/input.go` f6e9f93
 - [ ] Task: Implement query methods in `input/input.go`:
     - [ ] `Pressed(Action) bool`
     - [ ] `JustPressed(Action) bool`
