@@ -24,9 +24,17 @@ type gamepadManager struct {
 }
 
 // newGamepadManager は新しい gamepadManager を作成します。
-func newGamepadManager() *gamepadManager {
+func newGamepadManager() *keyboardManager {
 	return &gamepadManager{
 		buttons: []gamepadButtonBinding{},
 		axes:    []gamepadAxisBinding{},
 	}
+}
+
+// BindGamepadButton はゲームパッドのボタンをアクションにバインドします。
+func (i *Input) BindGamepadButton(action Action, button ebiten.StandardGamepadButton) {
+	i.gamepad.buttons = append(i.gamepad.buttons, gamepadButtonBinding{
+		action: action,
+		button: button,
+	})
 }
