@@ -54,6 +54,7 @@ func (i *Input) Update() {
 
 	// 各デバイスのポーリング
 	i.keyboard.update(i.actions)
+	i.gamepad.update(i.actions)
 
 	// JustPressed / JustReleased の確定
 	for _, state := range i.actions {

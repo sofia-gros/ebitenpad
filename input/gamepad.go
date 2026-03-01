@@ -47,3 +47,36 @@ func (i *Input) BindGamepadAxis(action Action, axisX, axisY int) {
 		axisY:  axisY,
 	})
 }
+
+// update はゲームパッド入力をポーリングし、各アクションの状態を更新します。
+func (m *gamepadManager) update(actions map[Action]*ActionState) {
+	ids := ebiten.AppendGamepadIDs(nil)
+	if len(ids) == 0 {
+		return
+	}
+	// 簡易化のため、最初のゲームパッドのみを対象とします。
+	id := ids[0]
+
+	for _, b := range m.buttons {
+		state := getOrInitState(actions, b.action)
+		if ebiten.IsStandardGamepadButtonPressed(id, b.button) {
+			state.pressed = true
+			state.strength = 1.0
+		}
+	}
+
+	for _, b := range m.axes {
+		state := getOrInitState(actions, b.action)
+		x := ebiten.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisX))
+		y := ebiten.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisY))
+
+		// デッドゾーン処理などは将来の拡張として、ここでは生値を採用
+		if x != 0 || y != 0 {
+			state.pressed = true
+			state.x = x
+			state.y = y
+			// 入力の強さを計算
+			state.strength = 1.0 // 簡易実装
+		}
+	}
+}
