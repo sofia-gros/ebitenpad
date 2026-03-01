@@ -40,3 +40,14 @@ func (i *Input) BindKey(action Action, key ebiten.Key) {
 		key:    key,
 	})
 }
+
+// BindKeyAxis は4つのキーをベクトルアクションとしてバインドします。
+func (i *Input) BindKeyAxis(action Action, left, right, up, down ebiten.Key) {
+	i.keyboard.axes = append(i.keyboard.axes, keyAxisBinding{
+		action: action,
+		left:   left,
+		right:  right,
+		up:     up,
+		down:   down,
+	})
+}
