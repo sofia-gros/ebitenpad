@@ -4,10 +4,10 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-// Action is a custom integer type to represent logical game actions.
+// Action は論理的なゲームアクションを表すカスタム整数型です。
 type Action int
 
-// ActionState represents the state of a logical game action.
+// ActionState は論理的なゲームアクションの状態を表します。
 type ActionState struct {
 	pressed      bool
 	justPressed  bool
@@ -19,24 +19,24 @@ type ActionState struct {
 	strength float64
 }
 
-// Input is the main manager for action-based input.
+// Input はアクションベースの入力を管理するメインマネージャーです。
 type Input struct {
 	actions map[Action]*ActionState
 }
 
-// NewInput creates and initializes a new Input instance.
+// NewInput は新しい Input インスタンスを作成し、初期化します。
 func NewInput() *Input {
 	return &Input{
 		actions: make(map[Action]*ActionState),
 	}
 }
 
-// Update updates the state of all actions.
+// Update はすべてのアクションの状態を更新します。
 func (i *Input) Update() {
-	// TODO: Iterate over bound devices and update action states.
+	// TODO: バインドされたデバイスを反復処理し、アクションの状態を更新します。
 }
 
-// Pressed returns true if the action is currently pressed.
+// Pressed はアクションが現在押されている場合に true を返します。
 func (i *Input) Pressed(action Action) bool {
 	if state, ok := i.actions[action]; ok {
 		return state.pressed
@@ -44,7 +44,7 @@ func (i *Input) Pressed(action Action) bool {
 	return false
 }
 
-// JustPressed returns true if the action was just pressed in the current frame.
+// JustPressed は現在のフレームでアクションが押されたばかりの場合に true を返します。
 func (i *Input) JustPressed(action Action) bool {
 	if state, ok := i.actions[action]; ok {
 		return state.justPressed
@@ -52,7 +52,7 @@ func (i *Input) JustPressed(action Action) bool {
 	return false
 }
 
-// JustReleased returns true if the action was just released in the current frame.
+// JustReleased は現在のフレームでアクションが離されたばかりの場合に true を返します。
 func (i *Input) JustReleased(action Action) bool {
 	if state, ok := i.actions[action]; ok {
 		return state.justReleased

@@ -7,32 +7,32 @@ import (
 func TestNewInput(t *testing.T) {
 	input := NewInput()
 	if input == nil {
-		t.Fatal("NewInput() returned nil")
+		t.Fatal("NewInput() が nil を返しました")
 	}
 	if input.actions == nil {
-		t.Error("NewInput() did not initialize actions map")
+		t.Error("NewInput() が actions マップを初期化しませんでした")
 	}
 }
 
 func TestActionStateInitialValues(t *testing.T) {
 	state := ActionState{}
 	if state.pressed != false {
-		t.Error("ActionState.pressed should be false by default")
+		t.Error("ActionState.pressed のデフォルト値は false である必要があります")
 	}
 	if state.justPressed != false {
-		t.Error("ActionState.justPressed should be false by default")
+		t.Error("ActionState.justPressed のデフォルト値は false である必要があります")
 	}
 	if state.justReleased != false {
-		t.Error("ActionState.justReleased should be false by default")
+		t.Error("ActionState.justReleased のデフォルト値は false である必要があります")
 	}
 	if state.x != 0 {
-		t.Errorf("ActionState.x should be 0, got %f", state.x)
+		t.Errorf("ActionState.x のデフォルト値は 0 である必要があります。現在の値: %f", state.x)
 	}
 	if state.y != 0 {
-		t.Errorf("ActionState.y should be 0, got %f", state.y)
+		t.Errorf("ActionState.y のデフォルト値は 0 である必要があります。現在の値: %f", state.y)
 	}
 	if state.strength != 0 {
-		t.Errorf("ActionState.strength should be 0, got %f", state.strength)
+		t.Errorf("ActionState.strength のデフォルト値は 0 である必要があります。現在の値: %f", state.strength)
 	}
 }
 
@@ -40,47 +40,47 @@ func TestInputQueries(t *testing.T) {
 	const jump Action = 1
 	input := NewInput()
 
-	// Initially all queries should return false
+	// 初期状態ではすべてのクエリが false を返す必要があります
 	if input.Pressed(jump) {
-		t.Error("Pressed() should be false initially")
+		t.Error("初期状態の Pressed() は false である必要があります")
 	}
 	if input.JustPressed(jump) {
-		t.Error("JustPressed() should be false initially")
+		t.Error("初期状態の JustPressed() は false である必要があります")
 	}
 	if input.JustReleased(jump) {
-		t.Error("JustReleased() should be false initially")
+		t.Error("初期状態の JustReleased() は false である必要があります")
 	}
 
-	// Mock state for the jump action
+	// ジャンプアクションの状態をモックします
 	input.actions[jump] = &ActionState{
 		pressed:      true,
 		justPressed:  true,
 		justReleased: false,
 	}
 
-	// Verify query results with mocked state
+	// モックされた状態でのクエリ結果を確認します
 	if !input.Pressed(jump) {
-		t.Error("Pressed() should be true when state.pressed is true")
+		t.Error("state.pressed が true の場合、Pressed() は true である必要があります")
 	}
 	if !input.JustPressed(jump) {
-		t.Error("JustPressed() should be true when state.justPressed is true")
+		t.Error("state.justPressed が true の場合、JustPressed() は true である必要があります")
 	}
 	if input.JustReleased(jump) {
-		t.Error("JustReleased() should be false when state.justReleased is false")
+		t.Error("state.justReleased が false の場合、JustReleased() は false である必要があります")
 	}
 
-	// Mock another state
+	// 別の状態をモックします
 	input.actions[jump].pressed = false
 	input.actions[jump].justPressed = false
 	input.actions[jump].justReleased = true
 
 	if input.Pressed(jump) {
-		t.Error("Pressed() should be false when state.pressed is false")
+		t.Error("state.pressed が false の場合、Pressed() は false である必要があります")
 	}
 	if input.JustPressed(jump) {
-		t.Error("JustPressed() should be false when state.justPressed is false")
+		t.Error("state.justPressed が false の場合、JustPressed() は false である必要があります")
 	}
 	if !input.JustReleased(jump) {
-		t.Error("JustReleased() should be true when state.justReleased is true")
+		t.Error("state.justReleased が true の場合、JustReleased() は true である必要があります")
 	}
 }
