@@ -18,3 +18,15 @@ type ActionState struct {
 
 	strength float64
 }
+
+// Input is the main manager for action-based input.
+type Input struct {
+	actions map[Action]*ActionState
+}
+
+// NewInput creates and initializes a new Input instance.
+func NewInput() *Input {
+	return &Input{
+		actions: make(map[Action]*ActionState),
+	}
+}
