@@ -38,3 +38,12 @@ func (i *Input) BindGamepadButton(action Action, button ebiten.StandardGamepadBu
 		button: button,
 	})
 }
+
+// BindGamepadAxis はゲームパッドのアナログスティック軸をアクションにバインドします。
+func (i *Input) BindGamepadAxis(action Action, axisX, axisY int) {
+	i.gamepad.axes = append(i.gamepad.axes, gamepadAxisBinding{
+		action: action,
+		axisX:  axisX,
+		axisY:  axisY,
+	})
+}
