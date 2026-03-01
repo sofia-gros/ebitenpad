@@ -32,3 +32,11 @@ func newKeyboardManager() *keyboardManager {
 		axes: []keyAxisBinding{},
 	}
 }
+
+// BindKey は単一のキーをアクションにバインドします。
+func (i *Input) BindKey(action Action, key ebiten.Key) {
+	i.keyboard.keys = append(i.keyboard.keys, keyBinding{
+		action: action,
+		key:    key,
+	})
+}
