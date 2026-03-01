@@ -11,11 +11,11 @@
 - [x] タスク: Conductor - ユーザー手動検証 'キーボードバインド' (workflow.md 準拠) 0a2f82f
 
 ## フェーズ 2: ゲームパッドバインドの実装
-- [ ] タスク: `input/gamepad.go` を作成し、ゲームパッド入力のバインド構造を定義
-- [ ] タスク: `BindGamepadButton(action, button)` の実装
-- [ ] タスク: `BindGamepadAxis(action, axisX, axisY)` の実装
-- [ ] タスク: `Input.Update()` におけるゲームパッド入力のポーリング処理の実装
-- [ ] タスク: ゲームパッドバインドのユニットテスト作成 (`input/gamepad_test.go`)
+- [x] タスク: `input/gamepad.go` を作成し、ゲームパッド入力のバインド構造を定義 71b6a1d
+- [x] タスク: `BindGamepadButton(action, button)` の実装 11d3719
+- [x] タスク: `BindGamepadAxis(action, axisX, axisY)` の実装 e405a41
+- [x] タスク: `Input.Update()` におけるゲームパッド入力のポーリング処理の実装 b250b0c
+- [x] タスク: ゲームパッドバインドのユニットテスト作成 (`input/gamepad_test.go`) 6e01c1d
 - [ ] タスク: Conductor - ユーザー手動検証 'ゲームパッドバインド' (workflow.md 準拠)
 
 ## フェーズ 3: 複合入力の検証
