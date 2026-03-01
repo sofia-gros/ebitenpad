@@ -8,9 +8,9 @@ This plan covers the initial scaffolding and core type implementation for `ebite
 - [x] Task: Conductor - User Manual Verification 'Project Scaffolding' (Protocol in workflow.md) 569f484
 
 ## Phase 2: Core Types Implementation
-- [ ] Task: Define `Action` and `ActionState` types in `input/input.go`
-    - [ ] Define `type Action int`
-    - [ ] Define `type ActionState struct` with fields: `pressed`, `justPressed`, `justReleased`, `x`, `y`, `strength`
+- [x] Task: Define `Action` and `ActionState` types in `input/input.go` a722933
+    - [x] Define `type Action int`
+    - [x] Define `type ActionState struct` with fields: `pressed`, `justPressed`, `justReleased`, `x`, `y`, `strength`
 - [ ] Task: Implement `Input` struct and `NewInput` constructor in `input/input.go`
     - [ ] `Input` should contain a map or slice of `ActionState`
 - [ ] Task: Write unit tests for `ActionState` and `Input` initialization in `input/input_test.go`
