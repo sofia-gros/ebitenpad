@@ -25,6 +25,7 @@ type ActionState struct {
 type Input struct {
 	actions  map[Action]*ActionState
 	keyboard *keyboardManager
+	gamepad  *gamepadManager
 }
 
 // NewInput は新しい Input インスタンスを作成し、初期化します。
@@ -32,6 +33,7 @@ func NewInput() *Input {
 	return &Input{
 		actions:  make(map[Action]*ActionState),
 		keyboard: newKeyboardManager(),
+		gamepad:  newGamepadManager(),
 	}
 }
 
