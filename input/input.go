@@ -35,3 +35,27 @@ func NewInput() *Input {
 func (i *Input) Update() {
 	// TODO: Iterate over bound devices and update action states.
 }
+
+// Pressed returns true if the action is currently pressed.
+func (i *Input) Pressed(action Action) bool {
+	if state, ok := i.actions[action]; ok {
+		return state.pressed
+	}
+	return false
+}
+
+// JustPressed returns true if the action was just pressed in the current frame.
+func (i *Input) JustPressed(action Action) bool {
+	if state, ok := i.actions[action]; ok {
+		return state.justPressed
+	}
+	return false
+}
+
+// JustReleased returns true if the action was just released in the current frame.
+func (i *Input) JustReleased(action Action) bool {
+	if state, ok := i.actions[action]; ok {
+		return state.justReleased
+	}
+	return false
+}
