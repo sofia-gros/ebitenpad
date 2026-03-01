@@ -30,3 +30,8 @@ func NewInput() *Input {
 		actions: make(map[Action]*ActionState),
 	}
 }
+
+// Update updates the state of all actions.
+func (i *Input) Update() {
+	// TODO: Iterate over bound devices and update action states.
+}
