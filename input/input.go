@@ -21,19 +21,58 @@ type ActionState struct {
 	lastPressed bool
 }
 
+// KeyboardScanner はキーボードの状態をスキャンするインターフェースです。
+type KeyboardScanner interface {
+	IsKeyPressed(key ebiten.Key) bool
+}
+
+// GamepadScanner はゲームパッドの状態をスキャンするインターフェースです。
+type GamepadScanner interface {
+	AppendGamepadIDs(ids []ebiten.GamepadID) []ebiten.GamepadID
+	IsStandardGamepadButtonPressed(id ebiten.GamepadID, button ebiten.StandardGamepadButton) bool
+	StandardGamepadAxisValue(id ebiten.GamepadID, axis ebiten.StandardGamepadAxis) float64
+}
+
+// DefaultKeyboardScanner は ebiten の標準 API を使用するデフォルトのスキャナーです。
+type DefaultKeyboardScanner struct{}
+
+func (s *DefaultKeyboardScanner) IsKeyPressed(key ebiten.Key) bool {
+	return ebiten.IsKeyPressed(key)
+}
+
+// DefaultGamepadScanner は ebiten の標準 API を使用するデフォルトのスキャナーです。
+type DefaultGamepadScanner struct{}
+
+func (s *DefaultGamepadScanner) AppendGamepadIDs(ids []ebiten.GamepadID) []ebiten.GamepadID {
+	return ebiten.AppendGamepadIDs(ids)
+}
+
+func (s *DefaultGamepadScanner) IsStandardGamepadButtonPressed(id ebiten.GamepadID, button ebiten.StandardGamepadButton) bool {
+	return ebiten.IsStandardGamepadButtonPressed(id, button)
+}
+
+func (s *DefaultGamepadScanner) StandardGamepadAxisValue(id ebiten.GamepadID, axis ebiten.StandardGamepadAxis) float64 {
+	return ebiten.StandardGamepadAxisValue(id, axis)
+}
+
 // Input はアクションベースの入力を管理するメインマネージャーです。
 type Input struct {
 	actions  map[Action]*ActionState
 	keyboard *keyboardManager
 	gamepad  *gamepadManager
+
+	keyboardScanner KeyboardScanner
+	gamepadScanner  GamepadScanner
 }
 
 // NewInput は新しい Input インスタンスを作成し、初期化します。
 func NewInput() *Input {
 	return &Input{
-		actions:  make(map[Action]*ActionState),
-		keyboard: newKeyboardManager(),
-		gamepad:  newGamepadManager(),
+		actions:         make(map[Action]*ActionState),
+		keyboard:        newKeyboardManager(),
+		gamepad:         newGamepadManager(),
+		keyboardScanner: &DefaultKeyboardScanner{},
+		gamepadScanner:  &DefaultGamepadScanner{},
 	}
 }
 
@@ -53,8 +92,8 @@ func (i *Input) Update() {
 	}
 
 	// 各デバイスのポーリング
-	i.keyboard.update(i.actions)
-	i.gamepad.update(i.actions)
+	i.keyboard.update(i.actions, i.keyboardScanner)
+	i.gamepad.update(i.actions, i.gamepadScanner)
 
 	// JustPressed / JustReleased の確定
 	for _, state := range i.actions {

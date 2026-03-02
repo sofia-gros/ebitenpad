@@ -1,6 +1,8 @@
 package input
 
 import (
+	"math"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -24,7 +26,7 @@ type gamepadManager struct {
 }
 
 // newGamepadManager は新しい gamepadManager を作成します。
-func newGamepadManager() *keyboardManager {
+func newGamepadManager() *gamepadManager {
 	return &gamepadManager{
 		buttons: []gamepadButtonBinding{},
 		axes:    []gamepadAxisBinding{},
@@ -49,8 +51,8 @@ func (i *Input) BindGamepadAxis(action Action, axisX, axisY int) {
 }
 
 // update はゲームパッド入力をポーリングし、各アクションの状態を更新します。
-func (m *gamepadManager) update(actions map[Action]*ActionState) {
-	ids := ebiten.AppendGamepadIDs(nil)
+func (m *gamepadManager) update(actions map[Action]*ActionState, scanner GamepadScanner) {
+	ids := scanner.AppendGamepadIDs(nil)
 	if len(ids) == 0 {
 		return
 	}
@@ -59,7 +61,7 @@ func (m *gamepadManager) update(actions map[Action]*ActionState) {
 
 	for _, b := range m.buttons {
 		state := getOrInitState(actions, b.action)
-		if ebiten.IsStandardGamepadButtonPressed(id, b.button) {
+		if scanner.IsStandardGamepadButtonPressed(id, b.button) {
 			state.pressed = true
 			state.strength = 1.0
 		}
@@ -67,14 +69,19 @@ func (m *gamepadManager) update(actions map[Action]*ActionState) {
 
 	for _, b := range m.axes {
 		state := getOrInitState(actions, b.action)
-		x := ebiten.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisX))
-		y := ebiten.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisY))
+		x := scanner.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisX))
+		y := scanner.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisY))
 
 		// デッドゾーン処理などは将来の拡張として、ここでは生値を採用
 		if x != 0 || y != 0 {
 			state.pressed = true
-			state.x = x
-			state.y = y
+			// すでに入力がある場合は合成する（簡易的に大きい方を採用）
+			if math.Abs(x) > math.Abs(state.x) {
+				state.x = x
+			}
+			if math.Abs(y) > math.Abs(state.y) {
+				state.y = y
+			}
 			// 入力の強さを計算
 			state.strength = 1.0 // 簡易実装
 		}

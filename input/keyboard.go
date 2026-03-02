@@ -1,6 +1,8 @@
 package input
 
 import (
+	"math"
+
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
@@ -53,10 +55,10 @@ func (i *Input) BindKeyAxis(action Action, left, right, up, down ebiten.Key) {
 }
 
 // update はキーボード入力をポーリングし、各アクションの状態を更新します。
-func (m *keyboardManager) update(actions map[Action]*ActionState) {
+func (m *keyboardManager) update(actions map[Action]*ActionState, scanner KeyboardScanner) {
 	for _, b := range m.keys {
 		state := getOrInitState(actions, b.action)
-		if ebiten.IsKeyPressed(b.key) {
+		if scanner.IsKeyPressed(b.key) {
 			state.pressed = true
 			state.strength = 1.0
 		}
@@ -65,24 +67,29 @@ func (m *keyboardManager) update(actions map[Action]*ActionState) {
 	for _, b := range m.axes {
 		state := getOrInitState(actions, b.action)
 		var dx, dy float64
-		if ebiten.IsKeyPressed(b.left) {
+		if scanner.IsKeyPressed(b.left) {
 			dx -= 1.0
 		}
-		if ebiten.IsKeyPressed(b.right) {
+		if scanner.IsKeyPressed(b.right) {
 			dx += 1.0
 		}
-		if ebiten.IsKeyPressed(b.up) {
+		if scanner.IsKeyPressed(b.up) {
 			dy -= 1.0
 		}
-		if ebiten.IsKeyPressed(b.down) {
+		if scanner.IsKeyPressed(b.down) {
 			dy += 1.0
 		}
 
 		if dx != 0 || dy != 0 {
 			state.pressed = true
-			state.x = dx
-			state.y = dy
-			state.strength = 1.0 // 簡易実装。
+			// すでに入力がある場合は合成する（簡易的に大きい方を採用）
+			if math.Abs(dx) > math.Abs(state.x) {
+				state.x = dx
+			}
+			if math.Abs(dy) > math.Abs(state.y) {
+				state.y = dy
+			}
+			state.strength = 1.0 // 簡易実装
 		}
 	}
 }
