@@ -59,8 +59,8 @@ func (m *keyboardManager) update(actions map[Action]*ActionState, scanner Keyboa
 	for _, b := range m.keys {
 		state := getOrInitState(actions, b.action)
 		if scanner.IsKeyPressed(b.key) {
-			state.pressed = true
-			state.strength = 1.0
+			state.Pressed = true
+			state.Strength = 1.0
 		}
 	}
 
@@ -81,15 +81,15 @@ func (m *keyboardManager) update(actions map[Action]*ActionState, scanner Keyboa
 		}
 
 		if dx != 0 || dy != 0 {
-			state.pressed = true
+			state.Pressed = true
 			// すでに入力がある場合は合成する（簡易的に大きい方を採用）
-			if math.Abs(dx) > math.Abs(state.x) {
-				state.x = dx
+			if math.Abs(dx) > math.Abs(state.X) {
+				state.X = dx
 			}
-			if math.Abs(dy) > math.Abs(state.y) {
-				state.y = dy
+			if math.Abs(dy) > math.Abs(state.Y) {
+				state.Y = dy
 			}
-			state.strength = 1.0 // 簡易実装
+			state.Strength = 1.0 // 簡易実装
 		}
 	}
 }

@@ -62,8 +62,8 @@ func (m *gamepadManager) update(actions map[Action]*ActionState, scanner Gamepad
 	for _, b := range m.buttons {
 		state := getOrInitState(actions, b.action)
 		if scanner.IsStandardGamepadButtonPressed(id, b.button) {
-			state.pressed = true
-			state.strength = 1.0
+			state.Pressed = true
+			state.Strength = 1.0
 		}
 	}
 
@@ -74,16 +74,16 @@ func (m *gamepadManager) update(actions map[Action]*ActionState, scanner Gamepad
 
 		// デッドゾーン処理などは将来の拡張として、ここでは生値を採用
 		if x != 0 || y != 0 {
-			state.pressed = true
+			state.Pressed = true
 			// すでに入力がある場合は合成する（簡易的に大きい方を採用）
-			if math.Abs(x) > math.Abs(state.x) {
-				state.x = x
+			if math.Abs(x) > math.Abs(state.X) {
+				state.X = x
 			}
-			if math.Abs(y) > math.Abs(state.y) {
-				state.y = y
+			if math.Abs(y) > math.Abs(state.Y) {
+				state.Y = y
 			}
 			// 入力の強さを計算
-			state.strength = 1.0 // 簡易実装
+			state.Strength = 1.0 // 簡易実装
 		}
 	}
 }

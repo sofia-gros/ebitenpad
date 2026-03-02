@@ -21,4 +21,4 @@
 ## フェーズ 3: 複合入力の検証
 - [x] タスク: 複数の入力ソース（キーボード + ゲームパッド）の統合テスト d01f5f9
 - [x] タスク: `JustPressed` / `JustReleased` の状態維持ロジックの改善 a005bea
-- [ ] タスク: Conductor - ユーザー手動検証 '複合入力' (workflow.md 準拠)
+- [x] タスク: Conductor - ユーザー手動検証 '複合入力' (workflow.md 準拠) 97b0241

@@ -49,10 +49,10 @@ func TestMultipleInputSourcesIntegration(t *testing.T) {
 	input.Update()
 
 	if !input.Pressed(jump) {
-		t.Error("Frame 1: Action should be pressed (Keyboard)")
+		t.Error("Frame 1: Action should be Pressed (Keyboard)")
 	}
 	if !input.JustPressed(jump) {
-		t.Error("Frame 1: Action should be just pressed")
+		t.Error("Frame 1: Action should be JustPressed")
 	}
 
 	// フレーム 2: キーボード継続 + ゲームパッド追加
@@ -60,10 +60,10 @@ func TestMultipleInputSourcesIntegration(t *testing.T) {
 	input.Update()
 
 	if !input.Pressed(jump) {
-		t.Error("Frame 2: Action should be pressed (Both)")
+		t.Error("Frame 2: Action should be Pressed (Both)")
 	}
 	if input.JustPressed(jump) {
-		t.Error("Frame 2: Action should NOT be just pressed (Already pressed)")
+		t.Error("Frame 2: Action should NOT be JustPressed (Already Pressed)")
 	}
 
 	// フレーム 3: キーボード離す + ゲームパッド継続
@@ -71,10 +71,10 @@ func TestMultipleInputSourcesIntegration(t *testing.T) {
 	input.Update()
 
 	if !input.Pressed(jump) {
-		t.Error("Frame 3: Action should be pressed (Gamepad)")
+		t.Error("Frame 3: Action should be Pressed (Gamepad)")
 	}
 	if input.JustReleased(jump) {
-		t.Error("Frame 3: Action should NOT be just released (Still pressed by gamepad)")
+		t.Error("Frame 3: Action should NOT be JustReleased (Still Pressed by gamepad)")
 	}
 
 	// フレーム 4: 全て離す
@@ -85,6 +85,6 @@ func TestMultipleInputSourcesIntegration(t *testing.T) {
 		t.Error("Frame 4: Action should be released")
 	}
 	if !input.JustReleased(jump) {
-		t.Error("Frame 4: Action should be just released")
+		t.Error("Frame 4: Action should be JustReleased")
 	}
 }

@@ -16,23 +16,23 @@ func TestNewInput(t *testing.T) {
 
 func TestActionStateInitialValues(t *testing.T) {
 	state := ActionState{}
-	if state.pressed != false {
-		t.Error("ActionState.pressed のデフォルト値は false である必要があります")
+	if state.Pressed != false {
+		t.Error("ActionState.Pressed のデフォルト値は false である必要があります")
 	}
-	if state.justPressed != false {
-		t.Error("ActionState.justPressed のデフォルト値は false である必要があります")
+	if state.JustPressed != false {
+		t.Error("ActionState.JustPressed のデフォルト値は false である必要があります")
 	}
-	if state.justReleased != false {
-		t.Error("ActionState.justReleased のデフォルト値は false である必要があります")
+	if state.JustReleased != false {
+		t.Error("ActionState.JustReleased のデフォルト値は false である必要があります")
 	}
-	if state.x != 0 {
-		t.Errorf("ActionState.x のデフォルト値は 0 である必要があります。現在の値: %f", state.x)
+	if state.X != 0 {
+		t.Errorf("ActionState.X のデフォルト値は 0 である必要があります。現在の値: %f", state.X)
 	}
-	if state.y != 0 {
-		t.Errorf("ActionState.y のデフォルト値は 0 である必要があります。現在の値: %f", state.y)
+	if state.Y != 0 {
+		t.Errorf("ActionState.Y のデフォルト値は 0 である必要があります。現在の値: %f", state.Y)
 	}
-	if state.strength != 0 {
-		t.Errorf("ActionState.strength のデフォルト値は 0 である必要があります。現在の値: %f", state.strength)
+	if state.Strength != 0 {
+		t.Errorf("ActionState.Strength のデフォルト値は 0 である必要があります。現在の値: %f", state.Strength)
 	}
 }
 
@@ -53,34 +53,34 @@ func TestInputQueries(t *testing.T) {
 
 	// ジャンプアクションの状態をモックします
 	input.actions[jump] = &ActionState{
-		pressed:      true,
-		justPressed:  true,
-		justReleased: false,
+		Pressed:      true,
+		JustPressed:  true,
+		JustReleased: false,
 	}
 
 	// モックされた状態でのクエリ結果を確認します
 	if !input.Pressed(jump) {
-		t.Error("state.pressed が true の場合、Pressed() は true である必要があります")
+		t.Error("state.Pressed が true の場合、Pressed() は true である必要があります")
 	}
 	if !input.JustPressed(jump) {
-		t.Error("state.justPressed が true の場合、JustPressed() は true である必要があります")
+		t.Error("state.JustPressed が true の場合、JustPressed() は true である必要があります")
 	}
 	if input.JustReleased(jump) {
-		t.Error("state.justReleased が false の場合、JustReleased() は false である必要があります")
+		t.Error("state.JustReleased が false の場合、JustReleased() は false である必要があります")
 	}
 
 	// 別の状態をモックします
-	input.actions[jump].pressed = false
-	input.actions[jump].justPressed = false
-	input.actions[jump].justReleased = true
+	input.actions[jump].Pressed = false
+	input.actions[jump].JustPressed = false
+	input.actions[jump].JustReleased = true
 
 	if input.Pressed(jump) {
-		t.Error("state.pressed が false の場合、Pressed() は false である必要があります")
+		t.Error("state.Pressed が false の場合、Pressed() は false である必要があります")
 	}
 	if input.JustPressed(jump) {
-		t.Error("state.justPressed が false の場合、JustPressed() は false である必要があります")
+		t.Error("state.JustPressed が false の場合、JustPressed() は false である必要があります")
 	}
 	if !input.JustReleased(jump) {
-		t.Error("state.justReleased が true の場合、JustReleased() は true である必要があります")
+		t.Error("state.JustReleased が true の場合、JustReleased() は true である必要があります")
 	}
 }
