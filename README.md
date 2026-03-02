@@ -43,6 +43,10 @@ func NewGame() *Game {
 	in.BindKeyAxis(ActionMove, ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS)
 	in.BindKey(ActionJump, ebiten.KeySpace)
 
+    // ゲームパッドのバインド
+	in.BindGamepadButton(ActionJump, ebiten.StandardGamepadButtonRightBottom)
+	in.BindGamepadAxis(ActionMove, 0, 1)
+
 	// バーチャルパッドの設定
 	v := in.Virtual()
 	stick := v.AddFixedStick(100, 300, 60)
