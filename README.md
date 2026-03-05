@@ -23,68 +23,65 @@ package main
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/ebitenutil"
 	"github.com/sofia-gros/ebitenpad/input"
 )
 
-// アクションの定義
 const (
-	ActionMove input.Action = iota
-	ActionJump
+	ActionJump input.Action = 1
+	ActionMove input.Action = 2
 )
 
 type Game struct {
 	in *input.Input
 }
 
-func NewGame() *Game {
-	in := input.NewInput()
-
-	// キーボードのバインド
-	in.BindKeyAxis(ActionMove, ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS)
-	in.BindKey(ActionJump, ebiten.KeySpace)
-
-    // ゲームパッドのバインド
-	in.BindGamepadButton(ActionJump, ebiten.StandardGamepadButtonRightBottom)
-	in.BindGamepadAxis(ActionMove, 0, 1)
-
-	// バーチャルパッドの設定
-	v := in.Virtual()
-	stick := v.AddFixedStick(100, 300, 60)
-	btn := v.AddButton(540, 300, 40)
-
-	// バーチャルパッドのバインド
-	in.BindStick(ActionMove, stick)
-	in.BindButton(ActionJump, btn)
-
-	return &Game{in: in}
-}
-
 func (g *Game) Update() error {
-	// 毎フレーム更新
 	g.in.Update()
-
-	// アクションの状態を確認
-	if g.in.Pressed(ActionMove) {
-		// 移動ベクトルの取得 (-1.0 ~ 1.0)
-		state, _ := g.in.GetActionState(ActionMove)
-		dx, dy := state.X, state.Y
-		// プレイヤーの移動処理など
-	}
-
-	if g.in.JustPressed(ActionJump) {
-		// ジャンプ処理
-	}
-
 	return nil
 }
 
 func (g *Game) Draw(screen *ebiten.Image) {
-	// バーチャルパッドの描画
+	vx, vy := 0.0, 0.0
+	strength := 0.0
+	if state, ok := g.in.GetActionState(ActionMove); ok {
+		vx, vy = state.X, state.Y
+		strength = state.Strength
+	}
+
+	// バーチャル UI の描画
 	g.in.Virtual().Draw(screen)
 }
 
+func (g *Game) Layout(outsideWidth, outsideHeight int) (screenWidth, screenHeight int) {
+	return 640, 480
+}
+
 func main() {
-	ebiten.RunGame(NewGame())
+	in := input.NewInput()
+
+	// Bind Keyboard
+	in.BindKey(ActionJump, ebiten.KeySpace)
+	in.BindKeyAxis(ActionMove, ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS)
+
+	// Bind Gamepad
+	in.BindGamepadButton(ActionJump, ebiten.StandardGamepadButtonRightBottom)
+	in.BindGamepadAxis(ActionMove, 0, 1)
+
+	// Virtual Padの設定
+	vpad := in.Virtual()
+	jumpBtn := vpad.AddButton().SetPosition(550, 400).SetRadius(40)
+	moveStick := vpad.AddStick().SetPosition(100, 380).SetRadius(60)
+
+	in.BindButton(ActionJump, jumpBtn)
+	in.BindStick(ActionMove, moveStick)
+
+	g := &Game{in: in}
+
+	ebiten.SetWindowTitle("ebitenpad WASM Example")
+	if err := ebiten.RunGame(g); err != nil {
+		log.Fatal(err)
+	}
 }
 ```
 
