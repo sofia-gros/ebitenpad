@@ -16,8 +16,9 @@ type Stick struct {
 	inputX, inputY float64
 	strength       float64
 
-	touchID ebiten.TouchID
-	locked  bool
+	touchID     ebiten.TouchID
+	touchLocked bool
+	mouseLocked bool
 }
 
 // SetPosition はスティックの中心位置を設定します。
@@ -44,13 +45,15 @@ func (s *Stick) Strength() float64 {
 
 // Update はスティックの状態を更新します。
 func (s *Stick) Update(touches []ebiten.TouchID) {
-	if !s.locked {
+	// ロック中でなければ毅フレームの状態をリセット
+	if !s.touchLocked && !s.mouseLocked {
 		s.inputX = 0
 		s.inputY = 0
 		s.strength = 0
 	}
 
-	if s.locked {
+	// タッチ入力処理
+	if s.touchLocked {
 		found := false
 		for _, id := range touches {
 			if id == s.touchID {
@@ -61,30 +64,48 @@ func (s *Stick) Update(touches []ebiten.TouchID) {
 			}
 		}
 		if !found {
-			s.locked = false
+			s.touchLocked = false
 			s.inputX = 0
 			s.inputY = 0
 			s.strength = 0
 		}
-		return
-	}
-
-	// 新しいタッチ
-	for _, id := range touches {
-		tx, ty := ebiten.TouchPosition(id)
-		if s.isInside(float64(tx), float64(ty)) {
-			s.touchID = id
-			s.locked = true
-			s.updateInput(float64(tx), float64(ty))
-			break
+	} else {
+		// 新しいタッチ
+		for _, id := range touches {
+			tx, ty := ebiten.TouchPosition(id)
+			if s.isInside(float64(tx), float64(ty)) {
+				s.touchID = id
+				s.touchLocked = true
+				s.mouseLocked = false // タッチが優先
+				s.updateInput(float64(tx), float64(ty))
+				break
+			}
 		}
 	}
 
-	// マウス入力
-	if !s.locked && ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
-		mx, my := ebiten.CursorPosition()
-		if s.isInside(float64(mx), float64(my)) {
+	// タッチにロックされている場合はマウス入力を無視
+	if s.touchLocked {
+		return
+	}
+
+	// マウス入力（ドラッグでロック）
+	if s.mouseLocked {
+		if !ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			s.mouseLocked = false
+			s.inputX = 0
+			s.inputY = 0
+			s.strength = 0
+		} else {
+			mx, my := ebiten.CursorPosition()
 			s.updateInput(float64(mx), float64(my))
+		}
+	} else {
+		if ebiten.IsMouseButtonPressed(ebiten.MouseButtonLeft) {
+			mx, my := ebiten.CursorPosition()
+			if s.isInside(float64(mx), float64(my)) {
+				s.mouseLocked = true
+				s.updateInput(float64(mx), float64(my))
+			}
 		}
 	}
 }

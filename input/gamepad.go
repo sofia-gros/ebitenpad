@@ -1,4 +1,4 @@
-package input
+﻿package input
 
 import (
 	"math"
@@ -8,15 +8,18 @@ import (
 
 // gamepadButtonBinding はアクションにバインドされたゲームパッドのボタンを表します。
 type gamepadButtonBinding struct {
-	action Action
-	button ebiten.StandardGamepadButton
+	controller Controller
+	action     Action
+	button     ebiten.StandardGamepadButton
 }
 
 // gamepadAxisBinding はアクションにバインドされたゲームパッドの軸を表します。
 type gamepadAxisBinding struct {
-	action Action
-	axisX  int
-	axisY  int
+	controller Controller
+	action     Action
+	axisX      int
+	axisY      int
+	deadzone   float64 // 0.0 のときデッドゾーンなし
 }
 
 // gamepadManager はゲームパッド入力を管理します。
@@ -33,57 +36,61 @@ func newGamepadManager() *gamepadManager {
 	}
 }
 
-// BindGamepadButton はゲームパッドのボタンをアクションにバインドします。
-func (i *Input) BindGamepadButton(action Action, button ebiten.StandardGamepadButton) {
-	i.gamepad.buttons = append(i.gamepad.buttons, gamepadButtonBinding{
-		action: action,
-		button: button,
-	})
-}
-
-// BindGamepadAxis はゲームパッドのアナログスティック軸をアクションにバインドします。
-func (i *Input) BindGamepadAxis(action Action, axisX, axisY int) {
-	i.gamepad.axes = append(i.gamepad.axes, gamepadAxisBinding{
-		action: action,
-		axisX:  axisX,
-		axisY:  axisY,
-	})
-}
-
 // update はゲームパッド入力をポーリングし、各アクションの状態を更新します。
-func (m *gamepadManager) update(actions map[Action]*ActionState, scanner GamepadScanner) {
+// Controller の値をそのまま gamepad ID として使用します。
+func (m *gamepadManager) update(actions map[Controller]map[Action]*ActionState, scanner GamepadScanner) {
 	ids := scanner.AppendGamepadIDs(nil)
 	if len(ids) == 0 {
 		return
 	}
-	// 簡易化のため、最初のゲームパッドのみを対象とします。
-	id := ids[0]
+
+	// 接続済み gamepad ID をセットで管理
+	connected := make(map[ebiten.GamepadID]bool, len(ids))
+	for _, id := range ids {
+		connected[id] = true
+	}
 
 	for _, b := range m.buttons {
-		state := getOrInitState(actions, b.action)
-		if scanner.IsStandardGamepadButtonPressed(id, b.button) {
+		gamepadID := ebiten.GamepadID(b.controller)
+		if !connected[gamepadID] {
+			continue
+		}
+		state := getOrInitState(actions, b.controller, b.action)
+		if scanner.IsStandardGamepadButtonPressed(gamepadID, b.button) {
 			state.Pressed = true
 			state.Strength = 1.0
 		}
 	}
 
 	for _, b := range m.axes {
-		state := getOrInitState(actions, b.action)
-		x := scanner.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisX))
-		y := scanner.StandardGamepadAxisValue(id, ebiten.StandardGamepadAxis(b.axisY))
+		gamepadID := ebiten.GamepadID(b.controller)
+		if !connected[gamepadID] {
+			continue
+		}
+		state := getOrInitState(actions, b.controller, b.action)
+		x := scanner.StandardGamepadAxisValue(gamepadID, ebiten.StandardGamepadAxis(b.axisX))
+		y := scanner.StandardGamepadAxisValue(gamepadID, ebiten.StandardGamepadAxis(b.axisY))
 
-		// デッドゾーン処理などは将来の拡張として、ここでは生値を採用
+		// デッドゾーン処理: 指定値以下の微小な入力を無視する
+		strength := math.Sqrt(x*x + y*y)
+		if strength <= b.deadzone {
+			continue
+		}
+
 		if x != 0 || y != 0 {
 			state.Pressed = true
-			// すでに入力がある場合は合成する（簡易的に大きい方を採用）
+			// すでに入力がある場合は合成する（大きい方を採用）
 			if math.Abs(x) > math.Abs(state.X) {
 				state.X = x
 			}
 			if math.Abs(y) > math.Abs(state.Y) {
 				state.Y = y
 			}
-			// 入力の強さを計算
-			state.Strength = 1.0 // 簡易実装
+			// 実際のベクトル長を Strength として計算（1.0 が上限）
+			strength = math.Min(strength, 1.0)
+			if strength > state.Strength {
+				state.Strength = strength
+			}
 		}
 	}
 }

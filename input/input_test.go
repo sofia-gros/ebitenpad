@@ -52,7 +52,10 @@ func TestInputQueries(t *testing.T) {
 	}
 
 	// ジャンプアクションの状態をモックします
-	input.actions[jump] = &ActionState{
+	if input.actions[DefaultController] == nil {
+		input.actions[DefaultController] = make(map[Action]*ActionState)
+	}
+	input.actions[DefaultController][jump] = &ActionState{
 		Pressed:      true,
 		JustPressed:  true,
 		JustReleased: false,
@@ -70,9 +73,9 @@ func TestInputQueries(t *testing.T) {
 	}
 
 	// 別の状態をモックします
-	input.actions[jump].Pressed = false
-	input.actions[jump].JustPressed = false
-	input.actions[jump].JustReleased = true
+	input.actions[DefaultController][jump].Pressed = false
+	input.actions[DefaultController][jump].JustPressed = false
+	input.actions[DefaultController][jump].JustReleased = true
 
 	if input.Pressed(jump) {
 		t.Error("state.Pressed が false の場合、Pressed() は false である必要があります")

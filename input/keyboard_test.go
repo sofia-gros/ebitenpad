@@ -1,6 +1,7 @@
 package input
 
 import (
+	"math"
 	"testing"
 
 	"github.com/hajimehoshi/ebiten/v2"
@@ -37,5 +38,80 @@ func TestBindKeyAxis(t *testing.T) {
 	}
 }
 
-// 実際のポーリングは Ebitengine の API に依存するため、Update のテストは難しいが
-// 内部の状態管理ロジックのテストは別途検討が必要。
+// mockKeyboardScanner はキーボードのモックスキャナーです。
+type mockKeyboardScanner struct {
+	pressedKeys map[ebiten.Key]bool
+}
+
+func (m *mockKeyboardScanner) IsKeyPressed(key ebiten.Key) bool {
+	return m.pressedKeys[key]
+}
+
+func TestKeyAxisUpdateStrength(t *testing.T) {
+	const move Action = 1
+	in := NewInput()
+	mock := &mockKeyboardScanner{pressedKeys: make(map[ebiten.Key]bool)}
+	in.keyboardScanner = mock
+	in.gamepadScanner = &mockNoGamepadScanner{}
+
+	in.BindKeyAxis(move, ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS)
+
+	// 単方向（右）: Strength は 1.0 であるべき
+	mock.pressedKeys[ebiten.KeyD] = true
+	in.Update()
+	state, _ := in.GetActionState(move)
+	if state.Strength != 1.0 {
+		t.Errorf("単方向の Strength は 1.0 であるべきです。実際: %f", state.Strength)
+	}
+	if state.X != 1.0 {
+		t.Errorf("右キーの X は 1.0 であるべきです。実際: %f", state.X)
+	}
+
+	// 斜め（右+下）: √(1²+1²) = √2 → clamp → 1.0
+	mock.pressedKeys[ebiten.KeyS] = true
+	in.Update()
+	state, _ = in.GetActionState(move)
+	if state.Strength != 1.0 {
+		t.Errorf("斜め入力の Strength は 1.0 (clamp後) であるべきです。実際: %f", state.Strength)
+	}
+
+	// キーを離す: Strength は 0.0 に戻るべき
+	mock.pressedKeys[ebiten.KeyD] = false
+	mock.pressedKeys[ebiten.KeyS] = false
+	in.Update()
+	state, ok := in.GetActionState(move)
+	if ok && state.Strength != 0.0 {
+		t.Errorf("入力なしの Strength は 0.0 であるべきです。実際: %f", state.Strength)
+	}
+}
+
+func TestKeyAxisStrengthSingleAxis(t *testing.T) {
+	const move Action = 1
+	in := NewInput()
+	mock := &mockKeyboardScanner{pressedKeys: make(map[ebiten.Key]bool)}
+	in.keyboardScanner = mock
+	in.gamepadScanner = &mockNoGamepadScanner{}
+
+	in.BindKeyAxis(move, ebiten.KeyA, ebiten.KeyD, ebiten.KeyW, ebiten.KeyS)
+
+	// 上方向のみ: dx=0, dy=-1 → Strength=1.0
+	mock.pressedKeys[ebiten.KeyW] = true
+	in.Update()
+	state, _ := in.GetActionState(move)
+	if math.Abs(state.Strength-1.0) > 1e-9 {
+		t.Errorf("上方向の Strength は 1.0 であるべきです。実際: %f", state.Strength)
+	}
+}
+
+// mockNoGamepadScanner はゲームパッドが接続されていないスキャナーのモックです。
+type mockNoGamepadScanner struct{}
+
+func (m *mockNoGamepadScanner) AppendGamepadIDs(ids []ebiten.GamepadID) []ebiten.GamepadID {
+	return ids
+}
+func (m *mockNoGamepadScanner) IsStandardGamepadButtonPressed(_ ebiten.GamepadID, _ ebiten.StandardGamepadButton) bool {
+	return false
+}
+func (m *mockNoGamepadScanner) StandardGamepadAxisValue(_ ebiten.GamepadID, _ ebiten.StandardGamepadAxis) float64 {
+	return 0
+}
