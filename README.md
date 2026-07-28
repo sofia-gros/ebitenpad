@@ -1,3 +1,14 @@
+> [!WARNING]
+> **リポジトリ移行のお知らせ / Repository Relocation Notice**
+>
+> 🇯🇵 **日本語**  
+> このリポジトリは新しい場所へ移行しました。今後は以下の新しいリポジトリを参照・利用してください。  
+> 🔗 **新リポジトリ:** https://github.com/sofia-gros/ebiten
+>
+> 🇺🇸 **English**  
+> This repository has been moved to a new location. Please refer to and use the new repository going forward.  
+> 🔗 **New Repository:** https://github.com/sofia-gros/ebiten
+
 # ebitenpad
 
 ebitenpad は Ebitengine (ebiten) 向けの、アクションベースの入力管理ライブラリです。
